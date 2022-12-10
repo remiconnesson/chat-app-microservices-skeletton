@@ -1,0 +1,9 @@
+services:
+  hits-counter:
+    build: .
+    ports:
+      - "7998:80"
+    depends_on:
+      - redis
+  redis:
+    image: redis
