@@ -5,7 +5,7 @@ import axios from "axios";
 const hits = ref(0);
 
 try {
-  const response = await axios.post("http://hits-counter")
+  const response = await axios.post("/hits")
   hits.value = parseInt(response.data.hits)
 } catch (error) {
   console.error(error);

@@ -1,15 +1,34 @@
 services:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.9
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Configuration File for Traefik
+      - ./traefik.yml:/etc/traefik/traefik.yml
   frontend:
     build: ./spa
-    ports:
-      - "4444:80"
     depends_on:
       - hits-counter
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chatapp.rule=Host(`localhost`)"
+      - "traefik.http.routers.chatapp.entrypoints=web"
   hits-counter:
     build: ./hits-counter
-    ports:
-      - "7999:80"
     depends_on:
       - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hits.rule=Host(`localhost`) && Path(`/hits`)"
+      - "traefik.http.routers.hits.entrypoints=web"
   redis:
     image: redis

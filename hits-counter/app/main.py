@@ -8,13 +8,17 @@ redis = get_redis_connection(
 
 app = FastAPI()
 
-@app.post("/")
-async def root():
+@app.post("/hits")
+async def hits():
+    """ Increments the hit counter and return the current value.
+    """
     hits = redis.incr("hits")
     return {"hits": hits}
 
-@app.get("/ping")
+@app.get("/hits/health")
 async def health_check():
+    """ Access redis and returns the current value of the hit counter
+    """
     redis.setnx("hits", 0)
     hits = redis.get("hits")
     return {"hits": hits}
