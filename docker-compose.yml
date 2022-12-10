@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build: ./spa
+    ports:
+      - "4444:4444"
+  hits-counter:
+    build: ./hits-counter/code
+    ports:
+      - "7999:80"
+    depends_on:
+      - redis
+  redis:
+    image: redis
