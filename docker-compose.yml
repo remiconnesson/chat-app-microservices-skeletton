@@ -18,10 +18,19 @@ services:
     build: ./spa
     depends_on:
       - hits-counter
+      - chat-websocket
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.chatapp.rule=Host(`localhost`)"
       - "traefik.http.routers.chatapp.entrypoints=web"
+  chat-websocket:
+    build: ./chat-websocket
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chat-ws.rule=Host(`localhost`) && PathPrefix(`/chat`)"
+      - "traefik.http.routers.chat-ws.entrypoints=web"
+      - "traefik.http.middlewares.chat-ws.stripprefix.prefixes=/chat"
+      - "traefik.http.routers.chat-ws.middlewares=chat-ws"
   hits-counter:
     build: ./hits-counter
     depends_on:

@@ -1,0 +1,5 @@
+services:
+  chat-websocket:
+    build: .
+    ports:
+      - "80:80"
