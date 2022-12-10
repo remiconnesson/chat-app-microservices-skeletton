@@ -23,6 +23,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.chatapp.rule=Host(`localhost`)"
       - "traefik.http.routers.chatapp.entrypoints=web"
+    deploy:
+      replicas: 2
   chat-websocket:
     build: ./chat-websocket
     labels:
@@ -31,6 +33,8 @@ services:
       - "traefik.http.routers.chat-ws.entrypoints=web"
       - "traefik.http.middlewares.chat-ws.stripprefix.prefixes=/chat"
       - "traefik.http.routers.chat-ws.middlewares=chat-ws"
+    deploy:
+      replicas: 3
   hits-counter:
     build: ./hits-counter
     depends_on:
@@ -39,5 +43,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.hits.rule=Host(`localhost`) && Path(`/hits`)"
       - "traefik.http.routers.hits.entrypoints=web"
+    deploy:
+      replicas: 2
   redis:
     image: redis
