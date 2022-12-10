@@ -57,12 +57,12 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "0.0.0.0:4444",
+		Addr:         "0.0.0.0:80",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	fmt.Println("Listening and serving on port 4444")
+	fmt.Println("Listening and serving on port 80")
 
 	log.Fatal(srv.ListenAndServe())
 	fmt.Println("serving one request...")

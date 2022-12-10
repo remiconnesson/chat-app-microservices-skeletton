@@ -2,7 +2,7 @@ services:
   frontend:
     build: ./spa
     ports:
-      - "4444:4444"
+      - "4444:80"
     depends_on:
       - hits-counter
   hits-counter:

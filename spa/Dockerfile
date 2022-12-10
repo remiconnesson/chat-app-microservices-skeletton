@@ -20,4 +20,6 @@ COPY --from=builder /app/spaServer .
 
 COPY ./www/dist ./www/dist
 
+EXPOSE 80
+
 CMD ["/app/spaServer"]
