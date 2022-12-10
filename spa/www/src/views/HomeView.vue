@@ -1,5 +1,20 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import axios from "axios";
+
+const hits = ref(0);
+
+try {
+  const response = await axios.post("http://hits-counter")
+  hits.value = parseInt(response.data.hits)
+} catch (error) {
+  console.error(error);
+  hits.value = Math.floor(Math.random() * 10000);
+}
+</script>
 
 <template>
-  <main><h1>Please Sign Up</h1></main>
+  <main>
+    <p>Welcome to the {{ hits }}nth visit of our app!!!</p>
+  </main>
 </template>

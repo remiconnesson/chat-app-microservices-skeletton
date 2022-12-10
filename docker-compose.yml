@@ -3,8 +3,10 @@ services:
     build: ./spa
     ports:
       - "4444:4444"
+    depends_on:
+      - hits-counter
   hits-counter:
-    build: ./hits-counter/code
+    build: ./hits-counter
     ports:
       - "7999:80"
     depends_on:
