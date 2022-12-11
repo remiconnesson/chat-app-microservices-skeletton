@@ -24,7 +24,7 @@ services:
       - "traefik.http.routers.chatapp.rule=Host(`localhost`)"
       - "traefik.http.routers.chatapp.entrypoints=web"
     deploy:
-      replicas: 2
+      replicas: 1
   chat-websocket:
     build: ./chat-websocket
     labels:
@@ -34,7 +34,7 @@ services:
       - "traefik.http.middlewares.chat-ws.stripprefix.prefixes=/chat"
       - "traefik.http.routers.chat-ws.middlewares=chat-ws"
     deploy:
-      replicas: 3
+      replicas: 1
   hits-counter:
     build: ./hits-counter
     depends_on:
@@ -44,6 +44,25 @@ services:
       - "traefik.http.routers.hits.rule=Host(`localhost`) && Path(`/hits`)"
       - "traefik.http.routers.hits.entrypoints=web"
     deploy:
-      replicas: 2
+      replicas: 1
   redis:
     image: redis
+  authentication:
+    build: ./auth
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=Host(`localhost`) && PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.middlewares.auth.stripprefix.prefixes=/auth"
+      - "traefik.http.routers.auth.middlewares=auth"
+    environment:
+      - EXPRESS_PORT=80
+      - JWT_SECRET=1234DONTDOTHAT
+      - MONGO_HOST=mongo
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
