@@ -1,11 +1,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "../stores/user";
+import { useUser } from "../stores/user";
 import axios from "axios";
 
 const router = useRouter();
-const { setToken } = useUserStore();
+const { setToken } = useUser();
 
 const registering = ref(true);
 const register = () => (registering.value = true);

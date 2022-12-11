@@ -1,17 +1,22 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import { useUserStore } from "./stores/user";
+import { useUser } from "./stores/user";
 
-const { isLoggedIn, logOut } = useUserStore();
+const { token, isLoggedIn, logOut } = useUser();
 </script>
 
 <template>
+  {{ isLoggedIn }}
+  {{ token }}
   <header>
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/register">Register</RouterLink>
-        <button v-if="isLoggedIn" @click="logOut">Logout</button>
+        <div v-if="isLoggedIn">
+          <button @click="logOut">Logout</button>
+          <RouterLink to="/chat">Chat</RouterLink>
+        </div>
+        <RouterLink v-else to="/register">Register</RouterLink>
       </nav>
     </div>
   </header>

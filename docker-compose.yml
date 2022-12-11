@@ -29,12 +29,14 @@ services:
     build: ./chat-websocket
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.chat-ws.rule=Host(`localhost`) && PathPrefix(`/chat`)"
+      - "traefik.http.routers.chat-ws.rule=Host(`localhost`) && PathPrefix(`/chat/ws`)"
       - "traefik.http.routers.chat-ws.entrypoints=web"
-      - "traefik.http.middlewares.chat-ws.stripprefix.prefixes=/chat"
+      - "traefik.http.middlewares.chat-ws.stripprefix.prefixes=/chat/ws"
       - "traefik.http.routers.chat-ws.middlewares=chat-ws"
     deploy:
       replicas: 1
+    environment:
+      - JWT_SECRET=1234DONTDOTHAT
   hits-counter:
     build: ./hits-counter
     depends_on:
