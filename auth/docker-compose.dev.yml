@@ -1,0 +1,13 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - EXPRESS_PORT=80
+      - JWT_SECRET=1234
+      - MONGO_HOST=mongo
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
