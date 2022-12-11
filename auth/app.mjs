@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import express from 'express'
+import helmet from 'helmet'
 import Joi from 'joi'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -40,6 +41,11 @@ const User = mongoose.model('User', userSchema);
  */
 const app = express()
 
+// security
+app.use(helmet())
+app.disable('x-powered-by')
+
+// api
 app.use(express.json())
 
 app.post('/register', async (req, res) => {
