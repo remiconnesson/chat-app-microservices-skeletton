@@ -1,15 +1,17 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "../stores/user";
 import axios from "axios";
 
 const router = useRouter();
+const { setToken } = useUserStore();
 
 const registering = ref(true);
 const register = () => (registering.value = true);
 const signin = () => (registering.value = false);
 
-const error = ref('')
+const error = ref("");
 
 const submitted = ref(false);
 const submitHandler = async (credentials) => {
@@ -18,10 +20,11 @@ const submitHandler = async (credentials) => {
   try {
     const response = await axios.post(endpoint, credentials);
     submitted.value = true;
+    setToken(response.headers["x-auth-token"]);
     router.push("/");
-  } catch (e)  {
-    console.error(e)
-    error.value = e.response.data.error
+  } catch (e) {
+    console.error(e);
+    error.value = e.response.data.error;
     submitted.value = false;
   }
 };
@@ -60,7 +63,7 @@ watch(
   <select v-model="selectedAccountIndex">
     <option v-for="(_, index) in accounts" :key="index">{{ index }}</option>
   </select>
-  <pre v-if="error" style="color:red;">ERROR {{ error }}</pre>
+  <pre v-if="error" style="color: red">ERROR {{ error }}</pre>
   <FormKit
     type="form"
     id="registration"

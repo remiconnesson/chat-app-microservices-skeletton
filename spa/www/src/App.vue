@@ -1,5 +1,8 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import { useUserStore } from "./stores/user";
+
+const { isLoggedIn, logOut } = useUserStore();
 </script>
 
 <template>
@@ -8,6 +11,7 @@ import { RouterLink, RouterView } from "vue-router";
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/register">Register</RouterLink>
+        <button v-if="isLoggedIn" @click="logOut">Logout</button>
       </nav>
     </div>
   </header>
