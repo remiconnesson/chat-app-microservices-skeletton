@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, WebSocket, Cookie, Depends
+from fastapi import FastAPI, WebSocket, Cookie, Depends, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from jose import jwt
 
@@ -12,7 +12,6 @@ async def auth_token(
     websocket: WebSocket,
     session: str | None = Cookie(default=None),
 ):
-    print(session)
     if session is None:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
     session = jwt.decode(session, JWT_SECRET)
@@ -25,5 +24,8 @@ async def websocket_endpoint(
 ):
     await websocket.accept()
     while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"{session} : Message text was: {data}")
+        try:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"you are {session} : Message text was: {data}")
+        except WebSocketDisconnect:
+            pass
