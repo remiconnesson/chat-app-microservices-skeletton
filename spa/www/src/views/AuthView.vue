@@ -7,12 +7,15 @@ import axios from "axios";
 const router = useRouter();
 const { setToken } = useUser();
 
+// switch between login and signup
 const registering = ref(true);
 const register = () => (registering.value = true);
 const signin = () => (registering.value = false);
 
+// error returned by the backend (to be printed on the form)
 const error = ref("");
 
+// handle of the signup/signing event
 const submitted = ref(false);
 const submitHandler = async (credentials) => {
   const endpoint = registering.value ? "/auth/register" : "/auth/login";
@@ -20,6 +23,7 @@ const submitHandler = async (credentials) => {
   try {
     const response = await axios.post(endpoint, credentials);
     submitted.value = true;
+    // THIS IS WHERE WE GET THE JWT FROM THE BACKEND
     setToken(response.headers["x-auth-token"]);
     router.push("/");
   } catch (e) {
@@ -29,6 +33,11 @@ const submitHandler = async (credentials) => {
   }
 };
 
+/** 
+ * Dev logic to avoid filling up a form each time
+ * should not be included in any real project.
+ *
+ */
 // prepopulate somefields to accelerate dev
 function makeAccount(username, email, password) {
   const account = { username, email, password };
@@ -40,6 +49,8 @@ const accounts = ref([]);
 
 const selectedAccountIndex = ref(0);
 
+
+// this is what is referred to in the form's v-model
 const formContent = ref();
 
 watch(
@@ -57,9 +68,10 @@ watch(
 </script>
 
 <template>
-  <button v-if="!registering" @click="register">Register</button>
-  <button v-else @click="signin">Sign In</button>
+  <button v-if="!registering" @click="register">Switch to Register</button>
+  <button v-else @click="signin">Switch to Sign In</button>
   <br />
+  <p>select a prepopulated account below</p>
   <select v-model="selectedAccountIndex">
     <option v-for="(_, index) in accounts" :key="index">{{ index }}</option>
   </select>

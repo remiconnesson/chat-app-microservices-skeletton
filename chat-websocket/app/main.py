@@ -1,6 +1,5 @@
 import os
 from fastapi import FastAPI, WebSocket, Cookie, Depends, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
 from jose import jwt
 
 JWT_SECRET = os.environ.get('JWT_SECRET')

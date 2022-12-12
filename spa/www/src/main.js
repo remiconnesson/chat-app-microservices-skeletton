@@ -15,6 +15,7 @@ app.use(router);
 
 app.mount("#app");
 
+// where we send back jwt stored in local storage
 axios.interceptors.request.use(function (config) {
   config.headers["x-auth-token"] = localStorage.getItem("x-auth-token") || "";
   return config;

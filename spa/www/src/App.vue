@@ -21,6 +21,7 @@ const { token, isLoggedIn, logOut } = useUser();
     </div>
   </header>
 
+  <!--- https://vuejs.org/guide/built-ins/suspense.html#combining-with-other-components --> 
   <RouterView v-slot="{ Component }">
     <template v-if="Component">
       <Suspense>

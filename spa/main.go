@@ -52,12 +52,13 @@ func main() {
 			json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 		})
 
+	// This is where you can define where the static files are built
 	spa := spaHandler{staticPath: "www/dist", indexPath: "index.html"}
 	router.PathPrefix("/").Handler(spa)
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "0.0.0.0:80",
+		Addr:         "0.0.0.0:80", // where you can change the port
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
