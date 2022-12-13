@@ -34,9 +34,11 @@ services:
       - "traefik.http.middlewares.chat-ws.stripprefix.prefixes=/chat/ws"
       - "traefik.http.routers.chat-ws.middlewares=chat-ws"
     deploy:
-      replicas: 1
+      replicas: 3
     environment:
       - JWT_SECRET=1234DONTDOTHAT
+    depends_on:
+      - redis
   hits-counter:
     build: ./hits-counter
     depends_on:

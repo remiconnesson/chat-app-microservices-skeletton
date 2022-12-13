@@ -1,12 +1,17 @@
 import os
+import asyncio
 from fastapi import FastAPI, WebSocket, Cookie, Depends, WebSocketDisconnect
 from jose import jwt
+import redis
+
+r = redis.Redis(host='redis', port=6379)
 
 JWT_SECRET = os.environ.get('JWT_SECRET')
 assert JWT_SECRET is not None, "Please set JWT_SECRET"
 
-app = FastAPI()
-
+#
+# WEBSOCKET MANAGER
+#
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
@@ -22,11 +27,34 @@ class ConnectionManager:
         await websocket.send_text(message)
 
     async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
+        # we make a copy to avoid iterating over a list that might be modified
+        # during iteration.
+        for connection in self.active_connections[:]:
+            try:
+                await connection.send_text(message)
+            except RunTimeError as error:
+                # this can happen if a websocket is closed during iteration.
+                print(error)
 
 manager = ConnectionManager()
+
+# 
+# BROADCAST TO WEBSOCKETS
+#
+def broadcast_chat_messages_from_redis(message_from_redis):
+    async def async_wrapper ():
+        await manager.broadcast(message_from_redis["data"].decode())
+    asyncio.run(async_wrapper())
+
+broadcaster = r.pubsub(ignore_subscribe_messages=True)
+broadcaster.subscribe(**{'chat': broadcast_chat_messages_from_redis})
+
+thread = broadcaster.run_in_thread(sleep_time=0.005, daemon=True)
+
+#
+# RECEIVE FROM WEBSOCKETS
+# 
+app = FastAPI()
 
 async def auth_token(
     websocket: WebSocket,
@@ -46,9 +74,8 @@ async def websocket_endpoint(
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            message_from_websocket = await websocket.receive_text()
+            r.publish("chat", client_id + " says " + message_from_websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"Client #{client_id} left the chat")
